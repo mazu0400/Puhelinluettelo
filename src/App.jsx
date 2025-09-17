@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import personService from "./services/persons";
+
 const Filter = ({ filter, handleFilterChange }) => (
   <div>
     filter shown with <input value={filter} onChange={handleFilterChange} />
@@ -28,7 +29,7 @@ const PersonForm = ({
 const Persons = ({ persons }) => (
   <ul>
     {persons.map((person, i) => (
-      <li key={i}>
+      <li key={person.id}>
         {person.name} {person.number}
       </li>
     ))}
@@ -42,10 +43,7 @@ const App = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => setPersons(response.data))
-      .catch((error) => console.error(error));
+    personService.getAll().then((initialPersons) => setPersons(initialPersons));
   }, []);
 
   const addPerson = (event) => {
@@ -59,12 +57,14 @@ const App = () => {
       return;
     }
     const personObject = {
-      name: newName,
-      number: newNumber,
+      name: newName.trim(),
+      number: newNumber.trim(),
     };
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewNumber("");
+    personService.create(personObject).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson));
+      setNewName("");
+      setNewNumber("");
+    });
   };
   const handleNameChange = (event) => setNewName(event.target.value);
   const handleNumberChange = (event) => setNewNumber(event.target.value);
