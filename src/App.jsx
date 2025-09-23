@@ -89,7 +89,8 @@ const App = () => {
           })
           .catch(() => {
             showNotification(
-              `Information of ${newName} has already been removed from server`
+              `Information of ${newName} has already been removed from server`,
+              "error"
             );
             setPersons(persons.filter((p) => p.id !== existingPerson.id));
           });
@@ -117,7 +118,8 @@ const App = () => {
         })
         .catch(() => {
           showNotification(
-            `Information of ${name} has already been removed from server`
+            `Information of ${name} has already been removed from server`,
+            "error"
           );
           setPersons(persons.filter((p) => p.id !== id));
         });
