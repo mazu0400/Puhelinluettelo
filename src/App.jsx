@@ -26,11 +26,14 @@ const PersonForm = ({
   </form>
 );
 
-const Persons = ({ persons }) => (
+const Persons = ({ persons, handleDelete }) => (
   <ul>
     {persons.map((person, i) => (
       <li key={person.id}>
-        {person.name} {person.number}
+        {person.name} {person.number}{" "}
+        <button onClick={() => handleDelete(person.id, person.name)}>
+          delete
+        </button>
       </li>
     ))}
   </ul>
@@ -66,6 +69,19 @@ const App = () => {
       setNewNumber("");
     });
   };
+  const handleDelete = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      personService
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter((p) => p.id !== id));
+        })
+        .catch(() => {
+          alert(`Information of ${name} has already been removed from server`);
+          setPersons(persons.filter((p) => p.id !== id));
+        });
+    }
+  };
   const handleNameChange = (event) => setNewName(event.target.value);
   const handleNumberChange = (event) => setNewNumber(event.target.value);
   const handleFilterChange = (event) => setFilter(event.target.value);
@@ -87,7 +103,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} handleDelete={handleDelete} />
     </div>
   );
 };
